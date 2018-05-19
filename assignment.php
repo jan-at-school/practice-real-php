@@ -27,8 +27,7 @@ $constants = mysql_fetch_array($constants);
 if (isset($_GET["id"])) {
     $id = mysqli_real_escape_string($mysqli, $_GET['id']);
     $assignment = mysqli_query("SELECT * from assignments,attachments where assignments.id=$id && assignments.attachmentId = attachments.id");
-    $user = mysqli_fetch_assoc($user);
-    $user
+    $assignment = mysqli_fetch_assoc($assignment);
     echo json_encode($user);
 
 } else {
