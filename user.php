@@ -17,8 +17,8 @@ function echoMessageWithStatus($status, $message)
 
 
 
-$constants = mysqli_query("SELECT * FROM globals);
-$constants = mysql_fetch_array($constants);
+$constants = mysqli_query($mysqli,"SELECT * FROM globals");
+$constants = mysqli_fetch_array($constants);
 
 
  $going_good = true;
@@ -26,7 +26,7 @@ $constants = mysql_fetch_array($constants);
 // check for post data
 if (isset($_GET["id"])) {
     $id = mysqli_real_escape_string($mysqli, $_GET['id']);
-    $user = mysqli_query("SELECT * from users where id=$id");
+    $user = mysqli_query($mysqli,"SELECT * from users where id=$id");
     $user = mysqli_fetch_assoc($user);
 
     echo json_encode($user);
