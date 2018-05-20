@@ -1,4 +1,5 @@
 <?php
+header("Access-Control-Allow-Origin: *");
 // array for JSON response
 $response = array();
 
@@ -28,6 +29,10 @@ if (isset($_GET["id"])) {
     $id = mysqli_real_escape_string($mysqli, $_GET['id']);
     $user = mysqli_query($mysqli,"SELECT * from users where id=$id");
     $user = mysqli_fetch_assoc($user);
+
+
+
+
 
     echo json_encode($user);
 
