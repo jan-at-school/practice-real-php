@@ -19,7 +19,7 @@ $constants = mysqli_fetch_array($constants);
  $going_good = true;
 
 // check for post data
-if (isset($_GET["email"]) && isset($_GET["password"])) {
+ if (isset($_GET["email"]) && isset($_GET["password"])) {
     $email = mysqli_real_escape_string($mysqli, $_GET['email']);
     $password = mysqli_real_escape_string($mysqli, $_GET['password']);
 
