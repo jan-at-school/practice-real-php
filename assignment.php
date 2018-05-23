@@ -1,19 +1,11 @@
 <?php
+include_once(".\global\utility.php");
+cors();
 // array for JSON response
 $response = array();
 
 include_once(".\config\dbconnect.php");
 
-
-
-
-function echoMessageWithStatus($status, $message)
-{
-
-    $response["status"]  = $status;
-    $response["message"] = $message;
-    echo json_encode($response);
-}
 
 
 
@@ -24,14 +16,29 @@ $constants = mysqli_fetch_assoc($constants);
  $going_good = true;
 
 if (!isset($_GET['id']) && !isset($_GET['uploadedBy'])) {
-  echoMessageWithStatus(0, "Invalid parameters!");
-  die;
+  $assignmentsResult = mysqli_query($mysqli,"SELECT * from assignments");
+  $assignments =array();
+  while($assignment = mysqli_fetch_assoc($assignmentsResult)){
+
+    $assignment=prepare_assignment($assignment);
+    array_push($assignments,$assignment);
+  }
+
+  echo json_encode($assignments,JSON_UNESCAPED_SLASHES);
 }
 
 
 
 
-
+function prepare_assignment($assignment){
+  $attatchments = $assignment['attachmentJsonData'];
+  // $attatchments = '[ { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" } ]';
+  $attatchments = json_decode($attatchments,JSON_UNESCAPED_SLASHES);
+  $assignment['attachmentJsonData'] = "";
+  $assignment = (object) $assignment;
+  $assignment-> attachments = $attatchments;
+  return $assignment;
+}
 
 
 // check for post data
@@ -40,17 +47,10 @@ if (isset($_GET["id"])) {
     $assignment = mysqli_query($mysqli,"SELECT * from assignments where id=$id");
     $assignment = mysqli_fetch_assoc($assignment);
 
-    $attatchments = $assignment['attachmentJsonData'];
-    // $attatchments = '[ { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" } ]';
-    $attatchments = json_decode($attatchments);
-
-    $assignment['attachmentJsonData'] = "";
-    $assignment = (object) $assignment;
-    $assignment-> attachments = $attatchments;
+    $assignment=prepare_assignment($assignment);
 
 
-
-    echo json_encode($assignment);
+    echo json_encode($assignment,JSON_UNESCAPED_SLASHES);
 
 }
 
@@ -60,16 +60,20 @@ if (isset($_GET["id"])) {
 
 if (isset($_GET["uploadedBy"])) {
     $uploadedBy = mysqli_real_escape_string($mysqli, $_GET['uploadedBy']);
-    $assignment = mysqli_query($mysqli,"SELECT * from assignmentswhere uploadedBy=$uploadedBy");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT * from assignments where uploadedBy=$uploadedBy");
     $assignments =array();
+    while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
-    while($assignment = mysqli_fetch_assoc($assignment)){
-      a
+      $assignment=prepare_assignment($assignment);
+      array_push($assignments,$assignment);
     }
 
-    echo json_encode($user);
+    echo json_encode($assignments,JSON_UNESCAPED_SLASHES);
 
 }
+
+
+
 
 
 ?>
