@@ -89,7 +89,8 @@ if($going_good){
       // $password_decrypted = my_decrypt($password_encrypted, $key);
       // echo $password_decrypted . "<br>";
 
-      $response["status"]  = 1;
+      $response["username"]  = $user["username"];
+      $response["userId"]  = $user["id"];
       $response["message"] = "Sign in successful";
       $response["authToken"] = "$token_encrypted";
       echo json_encode($response);
