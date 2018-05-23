@@ -38,20 +38,15 @@ if (!isset($_GET['id']) && !isset($_GET['uploadedBy'])) {
 if (isset($_GET["id"])) {
     $id = mysqli_real_escape_string($mysqli, $_GET['id']);
     $assignment = mysqli_query($mysqli,"SELECT * from assignments where id=$id");
-    var_dump($assignment);
     $assignment = mysqli_fetch_assoc($assignment);
-    //print_r($assignment);
-
 
     $attatchments = $assignment['attachmentJsonData'];
-    $attatchments = '[ { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" } ]';
-    echo $attatchments;
+    // $attatchments = '[ { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" } ]';
     $attatchments = json_decode($attatchments);
 
     $assignment['attachmentJsonData'] = "";
     $assignment = (object) $assignment;
-    $assignment-> attachments = array( $attatchments);
-
+    $assignment-> attachments = $attatchments;
 
 
 
@@ -66,7 +61,12 @@ if (isset($_GET["id"])) {
 if (isset($_GET["uploadedBy"])) {
     $uploadedBy = mysqli_real_escape_string($mysqli, $_GET['uploadedBy']);
     $assignment = mysqli_query($mysqli,"SELECT * from assignmentswhere uploadedBy=$uploadedBy");
-    $assignment = mysqli_fetch_assoc($assignment);
+    $assignments =array();
+
+    while($assignment = mysqli_fetch_assoc($assignment)){
+      a
+    }
+
     echo json_encode($user);
 
 }

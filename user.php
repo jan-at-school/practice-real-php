@@ -1,20 +1,17 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Methods : GET,POST,PUT,DELETE,OPTIONS");
+// header("Access-Control-Allow-Headers : Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 // array for JSON response
 $response = array();
 
 include_once(".\config\dbconnect.php");
 
+include_once(".\global\utility.php");
+
+cors();
 
 
-
-function echoMessageWithStatus($status, $message)
-{
-
-    $response["status"]  = $status;
-    $response["message"] = $message;
-    echo json_encode($response);
-}
 
 
 
@@ -23,6 +20,9 @@ $constants = mysqli_fetch_array($constants);
 
 
  $going_good = true;
+
+
+
 
 // check for post data
 if (isset($_GET["id"])) {
@@ -37,6 +37,9 @@ if (isset($_GET["id"])) {
     echo json_encode($user);
 
 } else {
+  $postdata = file_get_contents("php://input");
+  $request = json_decode($postdata);
+  var_dump($request);
   $going_good = false;
   echoMessageWithStatus(0, "Invalid parameters!");
 }
