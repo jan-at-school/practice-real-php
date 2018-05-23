@@ -17,30 +17,44 @@ function echoMessageWithStatus($status, $message)
 
 
 
-$constants = mysql_query("SELECT * FROM globals);
-$constants = mysql_fetch_array($constants);
+
+$constants = mysqli_query($mysqli,"SELECT * FROM globals");
+$constants = mysqli_fetch_array($constants);
 
 
  $going_good = true;
 
-// check parameters
-if (isset($_GET[""])) {
-    $parameter = $_GET[""];
-} else {
-  $going_good = false;
-  echoMessageWithStatus(0, "Invalid parameters!");
-}
 
 
 
-if($going_good){
-    if($included_in_package){
-        echoMessageWithStatus(1, "checkout successful!\nRides with current package are $rides_with_current_package now.");
+
+
+if (isset($_GET['name']) && isset($_GET['email']) && isset($_GET['password']))  {
+	$username = mysqli_real_escape_string($mysqli, $_GET['name']);
+
+	$email = mysqli_real_escape_string($mysqli, $_GET['email']);
+	$password =	mysqli_real_escape_string($mysqli, $_GET['password']);
+
+
+
+  $result = mysqli_query($mysqli, "INSERT INTO users(username,password,email) VALUES('$name','$password','$email')");
+
+
+
+
+  if($result){
+    choMessageWithStatus(1, "successful");
     }
-    else{
-        echoMessageWithStatus(1, "checkout successful!\nThe ride costed Rs.$fare_in_rs");
-    }
 
-}
+  }
+  else {
+     $going_good = false;
+     echoMessageWithStatus(0, "Invalid parameters!");
+   }
+  
+
+
+
+
 
 ?>
