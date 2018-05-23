@@ -1,19 +1,15 @@
 <?php
+
+include_once(".\config\dbconnect.php");
+include_once(".\global\utility.php");
+
+cors();
+
 // array for JSON response
 $response = array();
 
-include_once(".\config\dbconnect.php");
 
 
-
-
-function echoMessageWithStatus($status, $message)
-{
-
-    $response["status"]  = $status;
-    $response["message"] = $message;
-    echo json_encode($response);
-}
 
 
 
@@ -27,32 +23,51 @@ $constants = mysqli_fetch_array($constants);
 
 
 
-
-
-if (isset($_GET['name']) && isset($_GET['email']) && isset($_GET['password']))  {
-	$username = mysqli_real_escape_string($mysqli, $_GET['name']);
+if (isset($_GET['username']) && isset($_GET['email']) && isset($_GET['password']))  {
+	$name = mysqli_real_escape_string($mysqli, $_GET['username']);
 
 	$email = mysqli_real_escape_string($mysqli, $_GET['email']);
 	$password =	mysqli_real_escape_string($mysqli, $_GET['password']);
 
 
 
-  $result = mysqli_query($mysqli, "INSERT INTO users(username,password,email) VALUES('$name','$password','$email')");
 
 
+}
+else if(file_get_contents("php://input")!=null){
+  $postdata = file_get_contents("php://input");
+  $request = json_decode($postdata);
+
+  if(isset($request->username) &&  isset($request->email) && isset($request->password)){
+    $email =  $request->email;
+    $password = $request->password;
+    $username = $request->username;
+  }
+  else{
+    $going_good=false;
+    echoMessageWithStatus(0, "Invalid parameters!");
+  }
+
+  // var_dump($request);
+}
+ else {
+  $going_good = false;
+  echoMessageWithStatus(0, "Invalid parameters!");
+}
 
 
-  if($result){
-    choMessageWithStatus(1, "successful");
+if($going_good){
+
+    $result = mysqli_query($mysqli, "INSERT INTO users(username,password,email) VALUES('$username','$password','$email')");
+
+    if($result){
+      trysigin($email,$password);
+    }
+    else{
+      echoMessageWithStatus(0, "Counldn't sign up!");
     }
 
-  }
-  else {
-     $going_good = false;
-     echoMessageWithStatus(0, "Invalid parameters!");
-   }
-  
-
+}
 
 
 
