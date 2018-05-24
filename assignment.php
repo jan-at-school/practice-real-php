@@ -15,20 +15,8 @@ $constants = mysqli_fetch_assoc($constants);
 
  $going_good = true;
 
-if (!isset($_GET['id']) && !isset($_GET['uploadedBy'])) {
-  $assignmentsResult = mysqli_query($mysqli,"SELECT * from assignments");
-  $assignments =array();
-  while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
-    $assignment=prepare_assignment($assignment);
-    array_push($assignments,$assignment);
-  }
-
-  echo json_encode($assignments,JSON_UNESCAPED_SLASHES);
-}
-
-
-
+$servedRequest =false;
 
 function prepare_assignment($assignment){
   $attatchments = $assignment['attachmentJsonData'];
@@ -51,7 +39,7 @@ if (isset($_GET["id"])) {
 
 
     echo json_encode($assignment,JSON_UNESCAPED_SLASHES);
-
+    $servedRequest =true;
 }
 
 
@@ -69,10 +57,24 @@ if (isset($_GET["uploadedBy"])) {
     }
 
     echo json_encode($assignments,JSON_UNESCAPED_SLASHES);
-
+    $servedRequest =true;
 }
 
 
+
+
+//return assignments.....
+if (!$servedRequest) {
+  $assignmentsResult = mysqli_query($mysqli,"SELECT * from assignments");
+  $assignments =array();
+  while($assignment = mysqli_fetch_assoc($assignmentsResult)){
+
+    $assignment=prepare_assignment($assignment);
+    array_push($assignments,$assignment);
+  }
+
+  echo json_encode($assignments,JSON_UNESCAPED_SLASHES);
+}
 
 
 

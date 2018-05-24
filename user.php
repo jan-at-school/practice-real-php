@@ -30,7 +30,7 @@ if (isset($_GET["id"])) {
     $user = mysqli_query($mysqli,"SELECT * from users where id=$id");
     $user = mysqli_fetch_assoc($user);
 
-
+    $user['about'] = utf8_encode($user['about']);
 
 
 
