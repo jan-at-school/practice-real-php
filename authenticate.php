@@ -5,8 +5,8 @@
 
 
   if(isset($_POST['authToken'])){
-    $authToken = my_decrypt($_POST['authToken'], $key);
-    echo $authToken . "<br>";
+    // $authToken = my_decrypt($_POST['authToken'], $key);
+    // echo $authToken . "<br>";
 
   }
 
@@ -21,7 +21,8 @@
       if(my_decrypt($_GET['authToken'], $key)){
         $authToken = my_decrypt($_GET['authToken'], $key);
 
-        if($authToken =json_encode($authToken)){
+        if($authToken =json_decode($authToken)){
+
 
         }
         else{

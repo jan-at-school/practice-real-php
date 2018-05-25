@@ -7,7 +7,7 @@
   include_once(".\config\dbconnect.php");
 
 
-
+$tags=null;
 
 
 
@@ -18,16 +18,20 @@
 
 
    $going_good = true;
+   $tags_array= false;
 
 
 
 
-  if (isset($_GET['title']) && isset($_GET['description']) && isset($_GET['attachments']) && isset($_GET['attachmentsNames']))  {
-  	$name = mysqli_real_escape_string($mysqli, $_GET['username']);
+  if (isset($_GET['title']) && isset($_GET['description']) )  {
+  	$title = mysqli_real_escape_string($mysqli, $_GET['title']);
 
-  	$email = mysqli_real_escape_string($mysqli, $_GET['email']);
-  	$password =	mysqli_real_escape_string($mysqli, $_GET['password']);
-  
+  	$description = mysqli_real_escape_string($mysqli, $_GET['description']);
+    if(isset($_GET['tags'])){
+
+    	$tags =	mysqli_real_escape_string($mysqli, $_GET['tags']);
+    }
+
 
 
 
@@ -37,10 +41,14 @@
     $postdata = file_get_contents("php://input");
     $request = json_decode($postdata);
 
-    if(isset($request->username) &&  isset($request->email) && isset($request->password)){
-      $email =  $request->email;
-      $password = $request->password;
-      $username = $request->username;
+    if(isset($request->title) &&  isset($request->description)){
+      $title =  $request->title;
+      $description = $request->description;
+      if(isset($request->tags)){
+         $tags = $request->tags;
+         $tags_array= true;
+      }
+
     }
     else{
       $going_good=false;
@@ -56,11 +64,51 @@
 
 
   if($going_good){
+      $userId = $authToken->userId;
+      $descriptionUTF8 = utf8_encode($description);
 
-      $result = mysqli_query($mysqli, "INSERT INTO users(username,password,email) VALUES('$username','$password','$email')");
+
+
+
+      $user = mysqli_query($mysqli,"SELECT * from users where id=$userId");
+      $user = mysqli_fetch_assoc($user);
+      $username = $user['username'];
+      $dpImgUrl = $user['dpImgUrl'];
+
+
+
+      $result = mysqli_query($mysqli, "INSERT INTO assignments(title,description,uploadedBy,username,dpImgUrl) VALUES('$title','$descriptionUTF8','$userId','$username','$dpImgUrl')");
+
+      //todo... chekc i ftags are present
 
       if($result){
-        trysigin($email,$password);
+        $assginmentId = mysqli_query($mysqli,"SELECT LAST_INSERT_ID() as 'assignmentId';");
+        $assignmentId = mysqli_fetch_assoc($assginmentId);
+        $assignmentId = $assignmentId['assignmentId'];
+
+        if($tags!=null){
+          if(!$tags_array){
+            $tags = explode(",",$tags);
+          }
+          $sql = "INSERT into tags (tag,assignmentId) VALUES";
+          foreach ($tags as $tag) {
+            $sql .= "('$tag',$assignmentId),";
+          }
+          $sql=rtrim($sql,", ");
+          $result  = mysqli_query($mysqli,$sql);
+          if($result){
+            echo file_get_contents("http://localhost/pr/assignment.php?id=$assignmentId");
+          }
+          else{
+            echoMessageWithStatus(0, "Failed to save!");
+
+          }
+        }
+        else{
+          echo file_get_contents("http://localhost/pr/assignment.php?id=$assignmentId");
+        }
+
+
       }
       else{
         echoMessageWithStatus(0, "Counldn't sign up!");

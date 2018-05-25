@@ -32,7 +32,7 @@ function prepare_assignment($assignment){
 // check for post data
 if (isset($_GET["id"])) {
     $id = mysqli_real_escape_string($mysqli, $_GET['id']);
-    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, users.dpImgUrl, users.username  from assignments,users where assignments.id = $id && users.id = assignments.uploadedBy");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT * from assignments where id = $id");
     $assignment = mysqli_fetch_assoc($assignmentsResult);
 
     $assignment=prepare_assignment($assignment);
@@ -48,7 +48,22 @@ if (isset($_GET["id"])) {
 
 if (isset($_GET["uploadedBy"])) {
     $uploadedBy = mysqli_real_escape_string($mysqli, $_GET['uploadedBy']);
-    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, users.dpImgUrl, users.username, SUBSTRING(description, 1,300) as 'description'  from assignments,users where uploadedBy=$uploadedBy && users.id = $uploadedBy");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT *, SUBSTRING(description, 1,300) as 'description'  from assignments where uploadedBy=$uploadedBy");
+    $assignments =array();
+    while($assignment = mysqli_fetch_assoc($assignmentsResult)){
+
+      $assignment=prepare_assignment($assignment);
+      array_push($assignments,$assignment);
+    }
+
+    echo json_encode($assignments,JSON_UNESCAPED_SLASHES);
+    $servedRequest =true;
+}
+
+
+if (isset($_GET["tag"])) {
+    $tag = mysqli_real_escape_string($mysqli, $_GET['tag']);
+    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, SUBSTRING(description, 1,300) as 'description'  from assignments,tags where tags.tag= '$tag' && assignments.id=tags.assignmentId");
     $assignments =array();
     while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
@@ -62,10 +77,9 @@ if (isset($_GET["uploadedBy"])) {
 
 
 
-
 //return assignments.....
 if (!$servedRequest) {
-    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, users.dpImgUrl, users.username , SUBSTRING(description, 1,300) as 'description'  from assignments,users where users.id = assignments.uploadedBy");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*,  SUBSTRING(description, 1,300) as 'description'  from assignments,users");
   $assignments =array();
   while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
