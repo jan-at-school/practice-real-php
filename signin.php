@@ -113,8 +113,9 @@ if($signin){
 
 
 if($signup){
+    $dpImgUrl = "user_placeholder.jpg";
 
-    $result = mysqli_query($mysqli, "INSERT INTO users(username,password,email) VALUES('$username','$password','$email')");
+    $result = mysqli_query($mysqli, "INSERT INTO users(username,password,email,dpImgUrl) VALUES('$username','$password','$email','$dpImgUrl')");
 
     if($mysqli->affected_rows){
       trysigin($key,$mysqli,$email,$password);

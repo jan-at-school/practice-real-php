@@ -14,7 +14,7 @@
 
       return $token;
   }
-
+$current_time = round(microtime(true) * 1000);
 
 function echoMessageWithStatus($status, $message)
 {

@@ -47,8 +47,15 @@ if (isset($_GET["id"])) {
 
 
 if (isset($_GET["uploadedBy"])) {
+    if(isset($_GET["offset"])){
+      $offset = mysqli_real_escape_string($mysqli, $_GET['offset']);
+    }
+    else{
+      $offset = 0;
+    }
     $uploadedBy = mysqli_real_escape_string($mysqli, $_GET['uploadedBy']);
-    $assignmentsResult = mysqli_query($mysqli,"SELECT *, SUBSTRING(description, 1,300) as 'description'  from assignments where uploadedBy=$uploadedBy");
+
+    $assignmentsResult = mysqli_query($mysqli,"SELECT *, SUBSTRING(description, 1,300) as 'description'  from assignments where uploadedBy=$uploadedBy order by time limit $offset,20");
     $assignments =array();
     while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
@@ -62,8 +69,14 @@ if (isset($_GET["uploadedBy"])) {
 
 
 if (isset($_GET["tag"])) {
+    if(isset($_GET["offset"])){
+      $offset = mysqli_real_escape_string($mysqli, $_GET['offset']);
+    }
+    else{
+      $offset = 0;
+    }
     $tag = mysqli_real_escape_string($mysqli, $_GET['tag']);
-    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, SUBSTRING(description, 1,300) as 'description'  from assignments,tags where tags.tag= '$tag' && assignments.id=tags.assignmentId");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, SUBSTRING(description, 1,300) as 'description'  from assignments,tags where tags.tag= '$tag' && assignments.id=tags.assignmentId order by time limit $offset,20");
     $assignments =array();
     while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
@@ -79,7 +92,7 @@ if (isset($_GET["tag"])) {
 
 //return assignments.....
 if (!$servedRequest) {
-    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*,  SUBSTRING(description, 1,300) as 'description'  from assignments,users");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT *,  SUBSTRING(description, 1,300) as 'description'  from assignments order by time limit 20");
   $assignments =array();
   while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 

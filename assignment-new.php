@@ -77,7 +77,7 @@ $tags=null;
 
 
 
-      $result = mysqli_query($mysqli, "INSERT INTO assignments(title,description,uploadedBy,username,dpImgUrl) VALUES('$title','$descriptionUTF8','$userId','$username','$dpImgUrl')");
+      $result = mysqli_query($mysqli, "INSERT INTO assignments(title,description,uploadedBy,username,dpImgUrl,time) VALUES('$title','$descriptionUTF8','$userId','$username','$dpImgUrl','$current_time')");
 
       //todo... chekc i ftags are present
 
