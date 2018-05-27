@@ -58,7 +58,7 @@ function trysigin($key,$mysqli,$email,$password){
   $response["userId"]  = $user["id"];
   $response["message"] = "Sign in successful";
   $response["authToken"] = "$token_encrypted";
-  echo json_encode($response);
+  echo json_encode($response , JSON_UNESCAPED_SLASHES);
 }
 $signup = false;
 $signin=false;

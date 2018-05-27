@@ -25,26 +25,16 @@ $constants = mysqli_fetch_array($constants);
 
 
 // check for post data
-if (isset($_GET["id"])) {
-    $id = mysqli_real_escape_string($mysqli, $_GET['id']);
-    $user = mysqli_query($mysqli,"SELECT * from users where id=$id");
-    $user = mysqli_fetch_assoc($user);
+if (isset($_GET["count"])) {
+    $count = mysqli_real_escape_string($mysqli, $_GET['count']);
 
-    $user['about'] = utf8_encode($user['about']);
-    if($user['dpImgUrl']==null || $user['dpImgUrl'] =="" || $user['dpImgUrl'] =="user_placeholder.jpg"){
-      $user['dpImgUrl']='user_placeholder.jpg';
-    }
-    else{
-      $user['dpImgUrl']= 'profile-images/'.$user['dpImgUrl'];
-    }
+    $count = mysqli_query($mysqli,"SELECT COUNT(*) as 'count' from $count;");
+    $count = mysqli_fetch_assoc($count);
+    $count = $count['count'];
 
-
-    echo json_encode($user);
+    echo $count;
 
 } else {
-  $postdata = file_get_contents("php://input");
-  $request = json_decode($postdata);
-  var_dump($request);
   $going_good = false;
   echoMessageWithStatus(0, "Invalid parameters!");
 }

@@ -24,7 +24,12 @@ if (isset($_GET["id"])) {
     $id = mysqli_real_escape_string($mysqli, $_GET['id']);
     $commentResult = mysqli_query($mysqli,"SELECT * from comments where id = $id");
     $comment = mysqli_fetch_assoc($commentResult);
-
+    if($comment['dpImgUrl']==null || $comment['dpImgUrl'] =="" || $comment['dpImgUrl'] =="user_placeholder.jpg"){
+      $comment['dpImgUrl']='user_placeholder.jpg';
+    }
+    else{
+      $comment['dpImgUrl']= 'profile-images/'.$comment['dpImgUrl'];
+    }
     echo json_encode($comment,JSON_UNESCAPED_SLASHES);
     $servedRequest =true;
 }
@@ -39,6 +44,12 @@ if (isset($_GET["assignmentId"])) {
     $comments =array();
     while($comment = mysqli_fetch_assoc($commentsResult)){
 
+      if($comment['dpImgUrl']==null || $comment['dpImgUrl'] =="" || $comment['dpImgUrl'] =="user_placeholder.jpg"){
+        $comment['dpImgUrl']='user_placeholder.jpg';
+      }
+      else{
+        $comment['dpImgUrl']= 'profile-images/'.$comment['dpImgUrl'];
+      }
       // $assignment=prepare_assignment($assignment);
       array_push($comments,$comment);
     }

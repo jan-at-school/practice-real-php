@@ -8,6 +8,7 @@
 
 
 $tags=null;
+$externalAttachment = "";
 
 
 
@@ -32,6 +33,11 @@ $tags=null;
     	$tags =	mysqli_real_escape_string($mysqli, $_GET['tags']);
     }
 
+    if(isset($_GET['externalAttachment'])){
+
+    	$externalAttachment =	mysqli_real_escape_string($mysqli, $_GET['externalAttachment']);
+    }
+
 
 
 
@@ -42,11 +48,15 @@ $tags=null;
     $request = json_decode($postdata);
 
     if(isset($request->title) &&  isset($request->description)){
-      $title =  $request->title;
-      $description = $request->description;
+
+      $title =  mysqli_real_escape_string($mysqli, $request->title);
+      $description =  mysqli_real_escape_string($mysqli, $request->description);
       if(isset($request->tags)){
          $tags = $request->tags;
          $tags_array= true;
+      }
+      if(isset($request->externalAttachment)){
+        $externalAttachment =  mysqli_real_escape_string($mysqli, $request->externalAttachment);
       }
 
     }
@@ -76,8 +86,18 @@ $tags=null;
       $dpImgUrl = $user['dpImgUrl'];
 
 
+      if($tags_array){
+        $tags = implode(",",$tags);
+        $tags =  mysqli_real_escape_string($mysqli, $tags);
 
-      $result = mysqli_query($mysqli, "INSERT INTO assignments(title,description,uploadedBy,username,dpImgUrl,time) VALUES('$title','$descriptionUTF8','$userId','$username','$dpImgUrl','$current_time')");
+
+      }
+
+      $sql = "INSERT INTO assignments(title,tags,description,uploadedBy,username,dpImgUrl,time)
+                                          VALUES('$title','$tags','$descriptionUTF8','$userId','$username','$dpImgUrl','$current_time')";
+
+
+      $result = mysqli_query($mysqli, $sql);
 
       //todo... chekc i ftags are present
 
@@ -87,9 +107,9 @@ $tags=null;
         $assignmentId = $assignmentId['assignmentId'];
 
         if($tags!=null){
-          if(!$tags_array){
+          // if(!$tags_array){
             $tags = explode(",",$tags);
-          }
+          // }
           $sql = "INSERT into tags (tag,assignmentId) VALUES";
           foreach ($tags as $tag) {
             $sql .= "('$tag',$assignmentId),";
@@ -111,7 +131,7 @@ $tags=null;
 
       }
       else{
-        echoMessageWithStatus(0, "Counldn't sign up!");
+        echoMessageWithStatus(0, "Counldn't upload!");
       }
 
   }

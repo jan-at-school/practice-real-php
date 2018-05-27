@@ -23,8 +23,19 @@ function prepare_assignment($assignment){
   // $attatchments = '[ { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" }, { "url":"sdlkafjadsl", "type":"type" } ]';
   $attatchments = json_decode($attatchments,JSON_UNESCAPED_SLASHES);
   $assignment['attachmentJsonData'] = "";
+
+  if($assignment['dpImgUrl']==null || $assignment['dpImgUrl'] =="" || $assignment['dpImgUrl'] =="user_placeholder.jpg"){
+    $assignment['dpImgUrl']='user_placeholder.jpg';
+  }
+  else{
+    $assignment['dpImgUrl']= 'profile-images/'.$assignment['dpImgUrl'];
+  }
   $assignment = (object) $assignment;
   $assignment-> attachments = $attatchments;
+
+
+
+
   return $assignment;
 }
 
@@ -53,9 +64,15 @@ if (isset($_GET["uploadedBy"])) {
     else{
       $offset = 0;
     }
+    if(isset($_GET["limit"])){
+      $limit = mysqli_real_escape_string($mysqli, $_GET['limit']);
+    }
+    else{
+      $limit = 20;
+    }
     $uploadedBy = mysqli_real_escape_string($mysqli, $_GET['uploadedBy']);
 
-    $assignmentsResult = mysqli_query($mysqli,"SELECT *, SUBSTRING(description, 1,300) as 'description'  from assignments where uploadedBy=$uploadedBy order by time limit $offset,20");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT *, SUBSTRING(description, 1,300) as 'description'  from assignments where uploadedBy=$uploadedBy order by time DESC limit $offset,$limit");
     $assignments =array();
     while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
@@ -75,8 +92,14 @@ if (isset($_GET["tag"])) {
     else{
       $offset = 0;
     }
+    if(isset($_GET["limit"])){
+      $limit = mysqli_real_escape_string($mysqli, $_GET['limit']);
+    }
+    else{
+      $limit = 20;
+    }
     $tag = mysqli_real_escape_string($mysqli, $_GET['tag']);
-    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, SUBSTRING(description, 1,300) as 'description'  from assignments,tags where tags.tag= '$tag' && assignments.id=tags.assignmentId order by time limit $offset,20");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT assignments.*, SUBSTRING(description, 1,300) as 'description'  from assignments,tags where tags.tag= '$tag' && assignments.id=tags.assignmentId order by time DESC limit $offset,$limit");
     $assignments =array();
     while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
@@ -92,7 +115,7 @@ if (isset($_GET["tag"])) {
 
 //return assignments.....
 if (!$servedRequest) {
-    $assignmentsResult = mysqli_query($mysqli,"SELECT *,  SUBSTRING(description, 1,300) as 'description'  from assignments order by time limit 20");
+    $assignmentsResult = mysqli_query($mysqli,"SELECT *,  SUBSTRING(description, 1,300) as 'description'  from assignments order by time DESC limit 20");
   $assignments =array();
   while($assignment = mysqli_fetch_assoc($assignmentsResult)){
 
