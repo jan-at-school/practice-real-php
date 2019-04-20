@@ -15,9 +15,7 @@ include_once(".\config\dbconnect.php");
 
 
 \Cloudinary::config(array(
-  "cloud_name" => "janmarwat",
-  "api_key" => "696273655219257",
-  "api_secret" => "Wzbcdar3YPB1kY6OFL9HZpDdzI0"
+  
 ));
 
 
